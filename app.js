@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const config = require('./config/database');
-const testController = require('./controllers/test.controller');
+const categoriaController = require('./controllers/categoriaController');
 
 //Connect mongoose to our database
 mongoose.connect(config.database);
@@ -37,9 +37,8 @@ app.get('/', (req, res) => {
 })
 
 
-//Routing all HTTP requests to /bucketlist to bucketlist controller
-app.use('/testController', testController);
-
+//Routing all HTTP requests to all controllers
+app.use('/categoria', categoriaController);
 
 //Listen to port 3000
 app.listen(port, () => {
