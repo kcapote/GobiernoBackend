@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 const config = require('./config/database');
 
 //import of controllers
-const categoriaController = require('./controllers/categoriaController');
-const normaController = require('./controllers/normaController');
+const categoryController = require('./controllers/categoryController');
+const ruleController = require('./controllers/ruleController');
 const manualController = require('./controllers/manualController');
 
 //Connect mongoose to our database
@@ -40,8 +40,8 @@ app.get('/', (req, res) => {
 
 
 //Routing all HTTP requests to all controllers
-app.use('/categoria', categoriaController);
-app.use('/norma', normaController);
+app.use('/category', categoryController);
+app.use('/rule', ruleController);
 app.use('/manual', manualController);
 
 //Listen to port 3000

@@ -1,18 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-const Categoria = require('../models/categoria');
+const Category = require('../models/category');
 
 router.get('/', (req, res) => {
 
-    let paginacion = req.query.paginacion || 0;
-    paginacion = Number(paginacion);
+    let pagination = req.query.pagination || 0;
+    pagination = Number(pagination);
 
-    Categoria.find()
-        .skip(paginacion)
+    Category.find()
+        .skip(pagination)
         .limit(10)
         .exec(
-            (err, categorias) => {
+            (err, categories) => {
                 if (err) {
                     res.status(500).json({
                         success: false,
@@ -21,12 +21,12 @@ router.get('/', (req, res) => {
                     });
                 } else {
 
-                    Categoria.count({}, (err, totalRegistros) => {
+                    Category.count({}, (err, totalRecords) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
-                            categorias: categorias,
-                            totalRegistros: totalRegistros,
-                            paginacion: paginacion
+                            categories: categories,
+                            totalRecords: totalRecords,
+                            pagination: pagination
                         }, null, 2));
                         res.end();
 
@@ -35,20 +35,20 @@ router.get('/', (req, res) => {
             });
 });
 
-router.get('/buscar/:termino', (req, res) => {
+router.get('/search/:term', (req, res) => {
 
-    let termino = req.params.termino;
-    var regex = new RegExp(termino, 'i');
+    let term = req.params.term;
+    var regex = new RegExp(term, 'i');
 
-    let paginacion = req.query.paginacion || 0;
-    paginacion = Number(paginacion);
+    let pagination = req.query.pagination || 0;
+    pagination = Number(pagination);
 
-    Categoria.find()
+    Category.find()
         .or([{ 'name': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
-        .skip(paginacion)
+        .skip(pagination)
         .limit(10)
         .exec(
-            (err, categorias) => {
+            (err, categories) => {
                 if (err) {
                     res.status(500).json({
                         success: false,
@@ -57,12 +57,12 @@ router.get('/buscar/:termino', (req, res) => {
                     });
                 } else {
 
-                    Categoria.count({}, (err, totalRegistros) => {
+                    Category.count({}, (err, totalRecords) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
-                            categorias: categorias,
-                            totalRegistros: totalRegistros,
-                            paginacion: paginacion
+                            categories: categories,
+                            totalRecords: totalRecords,
+                            pagination: pagination
                         }, null, 2));
                         res.end();
 
@@ -73,11 +73,11 @@ router.get('/buscar/:termino', (req, res) => {
 
 
 router.post('/', (req, res, next) => {
-    let categoria = new Categoria({
+    let category = new Categoria({
         name: req.body.name,
         description: req.body.description
     });
-    categoria.save((err, categoriaSave) => {
+    category.save((err, categorySave) => {
         if (err) {
             res.status(400).json({
                 success: false,
@@ -88,7 +88,7 @@ router.post('/', (req, res, next) => {
             res.status(201).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa.',
-                categoria: categoriaSave
+                category: categorySave
             });
         }
     });
@@ -98,7 +98,7 @@ router.put('/:id', (req, res, next) => {
 
     let id = req.params.id;
 
-    Categoria.findById(id, (err, categoria) => {
+    Category.findById(id, (err, category) => {
         if (err) {
             res.status(500).json({
                 success: false,
@@ -107,17 +107,17 @@ router.put('/:id', (req, res, next) => {
             });
         }
 
-        if (!categoria) {
+        if (!category) {
             res.status(400).json({
                 success: false,
                 message: 'No existe una Categoría con el id: ' + id,
                 errors: { message: 'No se pudo encontrar la Categoría para actualizar' }
             });
         } else {
-            categoria.name = req.body.name;
-            categoria.description = req.body.description;
+            category.name = req.body.name;
+            category.description = req.body.description;
 
-            categoria.save((err, categoriaSave) => {
+            category.save((err, categorySave) => {
                 if (err) {
                     res.status(400).json({
                         success: false,
@@ -128,7 +128,7 @@ router.put('/:id', (req, res, next) => {
                     res.status(200).json({
                         success: true,
                         message: 'Operación realizada de forma exitosa.',
-                        categoria: categoriaSave
+                        category: categorySave
                     });
                 }
             });
@@ -142,18 +142,18 @@ router.delete('/:id', (req, res, next) => {
 
     let id = req.params.id;
 
-    Categoria.findByIdAndRemove(id, (err, categoriaRemove) => {
+    Category.findByIdAndRemove(id, (err, categoryRemove) => {
         if (err) {
             res.status(500).json({
                 success: false,
                 message: 'No se puede eliminar la Categoría',
                 errors: err
             });
-        } else if (categoriaRemove) {
+        } else if (categoryRemove) {
             res.status(200).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa',
-                categoria: categoriaRemove
+                category: categoryRemove
             });
         } else {
             res.status(400).json({

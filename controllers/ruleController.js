@@ -1,18 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-const Norma = require('../models/norma');
+const Rule = require('../models/rule');
 
 router.get('/', (req, res) => {
 
-    let paginacion = req.query.paginacion || 0;
-    paginacion = Number(paginacion);
+    let pagination = req.query.pagination || 0;
+    pagination = Number(pagination);
 
-    Norma.find()
-        .skip(paginacion)
+    Rule.find()
+        .skip(pagination)
         .limit(10)
         .exec(
-            (err, normas) => {
+            (err, rules) => {
                 if (err) {
                     res.status(500).json({
                         success: false,
@@ -21,12 +21,12 @@ router.get('/', (req, res) => {
                     });
                 } else {
 
-                    Norma.count({}, (err, totalRegistros) => {
+                    Rule.count({}, (err, totalRecords) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
-                            normas: normas,
-                            totalRegistros: totalRegistros,
-                            paginacion: paginacion
+                            rules: rules,
+                            totalRecords: totalRecords,
+                            pagination: pagination
                         }, null, 2));
                         res.end();
 
@@ -35,20 +35,20 @@ router.get('/', (req, res) => {
             });
 });
 
-router.get('/buscar/:termino', (req, res) => {
+router.get('/search/:term', (req, res) => {
 
-    let termino = req.params.termino;
-    var regex = new RegExp(termino, 'i');
+    let term = req.params.term;
+    var regex = new RegExp(term, 'i');
 
-    let paginacion = req.query.paginacion || 0;
-    paginacion = Number(paginacion);
+    let pagination = req.query.pagination || 0;
+    pagination = Number(pagination);
 
-    Norma.find()
+    Rule.find()
         .or([{ 'name': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
-        .skip(paginacion)
+        .skip(pagination)
         .limit(10)
         .exec(
-            (err, normas) => {
+            (err, rules) => {
                 if (err) {
                     res.status(500).json({
                         success: false,
@@ -57,12 +57,12 @@ router.get('/buscar/:termino', (req, res) => {
                     });
                 } else {
 
-                    Norma.count({}, (err, totalRegistros) => {
+                    Rule.count({}, (err, totalRecords) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
-                            normas: normas,
-                            totalRegistros: totalRegistros,
-                            paginacion: paginacion
+                            rules: rules,
+                            totalRecords: totalRecords,
+                            pagination: pagination
                         }, null, 2));
                         res.end();
 
@@ -73,7 +73,7 @@ router.get('/buscar/:termino', (req, res) => {
 
 
 router.post('/', (req, res, next) => {
-    let norma = new Norma({
+    let rule = new Norma({
         name: req.body.name,
         description: req.body.description,
         version: req.body.version,
@@ -81,7 +81,7 @@ router.post('/', (req, res, next) => {
         linkFile: req.body.linkFile,
         idFile: req.body.idFile
     });
-    Norma.save((err, normaSave) => {
+    rule.save((err, ruleSave) => {
         if (err) {
             res.status(400).json({
                 success: false,
@@ -92,7 +92,7 @@ router.post('/', (req, res, next) => {
             res.status(201).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa.',
-                norma: normaSave
+                rule: ruleSave
             });
         }
     });
@@ -102,7 +102,7 @@ router.put('/:id', (req, res, next) => {
 
     let id = req.params.id;
 
-    Norma.findById(id, (err, norma) => {
+    Rule.findById(id, (err, rule) => {
         if (err) {
             res.status(500).json({
                 success: false,
@@ -111,7 +111,7 @@ router.put('/:id', (req, res, next) => {
             });
         }
 
-        if (!norma) {
+        if (!rule) {
             res.status(400).json({
                 success: false,
                 message: 'No existe una Norma con el id: ' + id,
@@ -119,14 +119,14 @@ router.put('/:id', (req, res, next) => {
             });
         } else {
 
-            norma.name = req.body.name;
-            norma.description = req.body.description;
-            norma.version = req.body.version;
-            norma.publicationDate = req.body.publicationDate;
-            norma.linkFile = req.body.linkFile;
-            norma.idFile = req.body.idFile
+            rule.name = req.body.name;
+            rule.description = req.body.description;
+            rule.version = req.body.version;
+            rule.publicationDate = req.body.publicationDate;
+            rule.linkFile = req.body.linkFile;
+            rule.idFile = req.body.idFile
 
-            norma.save((err, normaSave) => {
+            rule.save((err, ruleSave) => {
                 if (err) {
                     res.status(400).json({
                         success: false,
@@ -137,7 +137,7 @@ router.put('/:id', (req, res, next) => {
                     res.status(200).json({
                         success: true,
                         message: 'Operación realizada de forma exitosa.',
-                        norma: normaSave
+                        rule: ruleSave
                     });
                 }
             });
@@ -151,18 +151,18 @@ router.delete('/:id', (req, res, next) => {
 
     let id = req.params.id;
 
-    Norma.findByIdAndRemove(id, (err, normaRemove) => {
+    Rule.findByIdAndRemove(id, (err, ruleRemove) => {
         if (err) {
             res.status(500).json({
                 success: false,
                 message: 'No se puede eliminar la Norma',
                 errors: err
             });
-        } else if (normaRemove) {
+        } else if (ruleRemove) {
             res.status(200).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa',
-                norma: normaRemove
+                rule: ruleRemove
             });
         } else {
             res.status(400).json({

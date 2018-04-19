@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const NormaSchema = mongoose.Schema({
+const RuleSchema = mongoose.Schema({
     name: {
         type: String,
         required: [true, "El nombre de la norma es nesesario"]
@@ -21,4 +21,4 @@ const NormaSchema = mongoose.Schema({
     idFile: String
 });
 
-const Norma = module.exports = mongoose.model('Norma', NormaSchema);
+const Rule = module.exports = mongoose.model('Rule', RuleSchema);

@@ -5,14 +5,14 @@ const Manual = require('../models/manual');
 
 router.get('/', (req, res) => {
 
-    let paginacion = req.query.paginacion || 0;
-    paginacion = Number(paginacion);
+    let pagination = req.query.pagination || 0;
+    pagination = Number(pagination);
 
     Manual.find()
-        .skip(paginacion)
+        .skip(pagination)
         .limit(10)
         .exec(
-            (err, manuales) => {
+            (err, manuals) => {
                 if (err) {
                     res.status(500).json({
                         success: false,
@@ -21,12 +21,12 @@ router.get('/', (req, res) => {
                     });
                 } else {
 
-                    Manual.count({}, (err, totalRegistros) => {
+                    Manual.count({}, (err, totalRecords) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
-                            manuales: manuales,
-                            totalRegistros: totalRegistros,
-                            paginacion: paginacion
+                            manuals: manuals,
+                            totalRecords: totalRecords,
+                            pagination: pagination
                         }, null, 2));
                         res.end();
 
@@ -35,20 +35,20 @@ router.get('/', (req, res) => {
             });
 });
 
-router.get('/buscar/:termino', (req, res) => {
+router.get('/search/:term', (req, res) => {
 
-    let termino = req.params.termino;
-    var regex = new RegExp(termino, 'i');
+    let term = req.params.term;
+    var regex = new RegExp(term, 'i');
 
-    let paginacion = req.query.paginacion || 0;
-    paginacion = Number(paginacion);
+    let pagination = req.query.pagination || 0;
+    pagination = Number(pagination);
 
     Manual.find()
         .or([{ 'name': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
-        .skip(paginacion)
+        .skip(pagination)
         .limit(10)
         .exec(
-            (err, manuales) => {
+            (err, manuals) => {
                 if (err) {
                     res.status(500).json({
                         success: false,
@@ -57,12 +57,12 @@ router.get('/buscar/:termino', (req, res) => {
                     });
                 } else {
 
-                    Manual.count({}, (err, totalRegistros) => {
+                    Manual.count({}, (err, totalRecords) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
-                            manuales: manuales,
-                            totalRegistros: totalRegistros,
-                            paginacion: paginacion
+                            manuals: manuals,
+                            totalRecords: totalRecords,
+                            pagination: pagination
                         }, null, 2));
                         res.end();
 
