@@ -1,7 +1,5 @@
-//Require mongoose package
 const mongoose = require('mongoose');
 
-//Define NormaSchema with title, description and norma
 const NormaSchema = mongoose.Schema({
     name: {
         type: String,

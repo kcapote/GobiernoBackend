@@ -1,11 +1,14 @@
-// We’ll declare all our dependencies here
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const config = require('./config/database');
+
+//import of controllers
 const categoriaController = require('./controllers/categoriaController');
+const normaController = require('./controllers/normaController');
+const manualController = require('./controllers/manualController');
 
 //Connect mongoose to our database
 mongoose.connect(config.database);
@@ -27,7 +30,6 @@ app.use(bodyParser.json());
 
 /*express.static is a built in middleware function to serve static files.
  We are telling express server public folder is the place to look for the static files
-
 */
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -39,6 +41,8 @@ app.get('/', (req, res) => {
 
 //Routing all HTTP requests to all controllers
 app.use('/categoria', categoriaController);
+app.use('/norma', normaController);
+app.use('/manual', manualController);
 
 //Listen to port 3000
 app.listen(port, () => {

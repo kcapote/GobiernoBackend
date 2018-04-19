@@ -1,7 +1,5 @@
-//Require mongoose package
 const mongoose = require('mongoose');
 
-//Define CategoriaSchema with title, description and category
 const CategoriaSchema = mongoose.Schema({
     name: {
         type: String,
