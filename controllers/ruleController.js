@@ -44,7 +44,7 @@ router.get('/search/:term', (req, res) => {
     pagination = Number(pagination);
 
     Rule.find()
-        .or([{ 'name': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
+        .or([{ 'name': regex }, { 'description': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
         .skip(pagination)
         .limit(10)
         .exec(
