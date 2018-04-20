@@ -73,7 +73,7 @@ router.get('/search/:term', (req, res) => {
 
 
 router.post('/', (req, res, next) => {
-    let category = new Categoria({
+    let category = new Category({
         name: req.body.name,
         description: req.body.description
     });
