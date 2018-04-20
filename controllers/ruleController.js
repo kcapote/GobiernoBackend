@@ -73,7 +73,7 @@ router.get('/search/:term', (req, res) => {
 
 
 router.post('/', (req, res, next) => {
-    let rule = new Norma({
+    let rule = new Rule({
         name: req.body.name,
         description: req.body.description,
         version: req.body.version,
