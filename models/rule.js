@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var Schema =	mongoose.Schema;
 
 const RuleSchema = mongoose.Schema({
     name: {
@@ -13,9 +14,12 @@ const RuleSchema = mongoose.Schema({
         type: String,
         required: [true, "La versión de la norma es nesesaria"]
     },
+    category: { 
+        type: Schema.Types.ObjectId,
+        ref: 'Category'  
+    },
     creationDate: {
-        type: Date,
-        default: new Date()
+        type: Date
     },
     updateDate: {
         type: Date

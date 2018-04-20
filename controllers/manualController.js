@@ -44,7 +44,7 @@ router.get('/search/:term', (req, res) => {
     pagination = Number(pagination);
 
     Manual.find()
-        .or([{ 'name': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
+        .or([{ 'name': regex }, { 'description': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
         .skip(pagination)
         .limit(10)
         .exec(
@@ -79,10 +79,11 @@ router.post('/', (req, res, next) => {
         version: req.body.version,
         creationDate: new Date(),
         updateDate: new Date(),
+        category: req.body.category,
         linkFile: req.body.linkFile,
         idFile: req.body.idFile
     });
-    Manual.save((err, manualSave) => {
+    manual.save((err, manualSave) => {
         if (err) {
             res.status(400).json({
                 success: false,
@@ -124,6 +125,7 @@ router.put('/:id', (req, res, next) => {
             manual.description = req.body.description;
             manual.version = req.body.version;
             manual.updateDate = new Date();
+            manual.category = req.body.category;
             manual.linkFile = req.body.linkFile;
             manual.idFile = req.body.idFile
 

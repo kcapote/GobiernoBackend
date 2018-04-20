@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var Schema =	mongoose.Schema;
 
 const ManualSchema = mongoose.Schema({
     name: {
@@ -14,11 +15,14 @@ const ManualSchema = mongoose.Schema({
         required: [true, "La versión de la manual es nesesaria"]
     },
     creationDate: {
-        type: Date,
-        default: new Date()
+        type: Date
     },
     updateDate: {
         type: Date
+    },
+    category: { 
+        type: Schema.Types.ObjectId,
+        ref: 'Category'  
     },
     linkFile: String,
     idFile: String

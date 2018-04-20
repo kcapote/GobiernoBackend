@@ -79,6 +79,7 @@ router.post('/', (req, res, next) => {
         version: req.body.version,
         creationDate: new Date(),
         updateDate: new Date(),
+        category: req.body.category,
         linkFile: req.body.linkFile,
         idFile: req.body.idFile
     });
@@ -123,7 +124,8 @@ router.put('/:id', (req, res, next) => {
             rule.name = req.body.name;
             rule.description = req.body.description;
             rule.version = req.body.version;
-            updateDate = new Date();
+            rule.updateDate = new Date();
+            rule.category = req.body.category;
             rule.linkFile = req.body.linkFile;
             rule.idFile = req.body.idFile
 
