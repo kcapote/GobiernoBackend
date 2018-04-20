@@ -13,9 +13,12 @@ const ManualSchema = mongoose.Schema({
         type: String,
         required: [true, "La versión de la manual es nesesaria"]
     },
-    publicationDate: {
-        type: String,
-        required: [true, "El nombre de la manual es nesesario"]
+    creationDate: {
+        type: Date,
+        default: new Date()
+    },
+    updateDate: {
+        type: Date
     },
     linkFile: String,
     idFile: String
