@@ -9,6 +9,7 @@ router.get('/', (req, res) => {
     pagination = Number(pagination);
 
     Rule.find()
+        .populate('category')
         .skip(pagination)
         .limit(10)
         .exec(
@@ -44,6 +45,7 @@ router.get('/search/:term', (req, res) => {
     pagination = Number(pagination);
 
     Rule.find()
+        .populate('category')
         .or([{ 'name': regex }, { 'description': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
         .skip(pagination)
         .limit(10)
@@ -69,6 +71,39 @@ router.get('/search/:term', (req, res) => {
                     });
                 }
             });
+});
+
+router.get('/:id', (req, res, next) => {
+
+    let id = req.params.id;
+
+    Rule.find({'_id':id})
+    .populate('category')
+    .exec(
+        (id, (err, rule) => {
+            console.log(rule);
+            if (err) {
+                res.status(500).json({
+                    success: false,
+                    message: 'No se puede actualizar la Norma',
+                    errors: err
+                });
+            }
+            if (!rule) {
+                res.status(400).json({
+                    success: false,
+                    message: 'No existe una Norma con el id: ' + id,
+                    errors: { message: 'No se pudo encontrar la Norma para actualizar' }
+                });
+            } else {
+                res.status(200).json({
+                    success: true,
+                    message: 'Operación realizada de forma exitosa.',
+                    rule: rule
+                });
+            }
+    })
+)
 });
 
 

@@ -10,10 +10,6 @@ const ManualSchema = mongoose.Schema({
         type: String,
         required: [true, "La descripción de la manual es nesesaria"]
     },
-    version: {
-        type: String,
-        required: [true, "La versión de la manual es nesesaria"]
-    },
     creationDate: {
         type: Date
     },

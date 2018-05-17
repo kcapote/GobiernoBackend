@@ -9,6 +9,7 @@ const config = require('./config/database');
 const categoryController = require('./controllers/categoryController');
 const ruleController = require('./controllers/ruleController');
 const manualController = require('./controllers/manualController');
+const userController = require('./controllers/userController');
 
 //Connect mongoose to our database
 mongoose.connect(config.database);
@@ -43,6 +44,8 @@ app.get('/', (req, res) => {
 app.use('/category', categoryController);
 app.use('/rule', ruleController);
 app.use('/manual', manualController);
+app.use('/user', userController);
+
 
 //Listen to port 3000
 app.listen(port, () => {

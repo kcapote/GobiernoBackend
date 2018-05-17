@@ -9,6 +9,7 @@ router.get('/', (req, res) => {
     pagination = Number(pagination);
 
     Manual.find()
+        .populate('category')
         .skip(pagination)
         .limit(10)
         .exec(
@@ -20,7 +21,6 @@ router.get('/', (req, res) => {
                         errors: err
                     });
                 } else {
-
                     Manual.count({}, (err, totalRecords) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
@@ -44,6 +44,7 @@ router.get('/search/:term', (req, res) => {
     pagination = Number(pagination);
 
     Manual.find()
+        .populate('category')
         .or([{ 'name': regex }, { 'description': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
         .skip(pagination)
         .limit(10)
@@ -72,11 +73,43 @@ router.get('/search/:term', (req, res) => {
 });
 
 
+router.get('/:id', (req, res, next) => {
+
+    let id = req.params.id;
+
+    Manual.find({'_id':id})
+    .populate('category')
+    .exec(
+        (id, (err, manual) => {
+            if (err) {
+                res.status(500).json({
+                    success: false,
+                    message: 'No se puede actualizar el manual',
+                    errors: err
+                });
+            }
+            if (!manual) {
+                res.status(400).json({
+                    success: false,
+                    message: 'No existe un manual con el id: ' + id,
+                    errors: { message: 'No se pudo encontrar un manual' }
+                });
+            } else {
+                res.status(200).json({
+                    success: true,
+                    message: 'Operación realizada de forma exitosa.',
+                    manual: manual
+                });
+            }
+        })
+    )
+});
+
+
 router.post('/', (req, res, next) => {
     let manual = new Manual({
         name: req.body.name,
         description: req.body.description,
-        version: req.body.version,
         creationDate: new Date(),
         updateDate: new Date(),
         category: req.body.category,
@@ -123,7 +156,6 @@ router.put('/:id', (req, res, next) => {
 
             manual.name = req.body.name;
             manual.description = req.body.description;
-            manual.version = req.body.version;
             manual.updateDate = new Date();
             manual.category = req.body.category;
             manual.linkFile = req.body.linkFile;

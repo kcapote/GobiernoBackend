@@ -71,6 +71,33 @@ router.get('/search/:term', (req, res) => {
             });
 });
 
+router.get('/:id', (req, res, next) => {
+
+    let id = req.params.id;
+
+    Category.findById(id, (err, category) => {
+        if (err) {
+            res.status(500).json({
+                success: false,
+                message: 'No se puede actualizar la Categoría',
+                errors: err
+            });
+        }
+        if (!category) {
+            res.status(400).json({
+                success: false,
+                message: 'No existe una Categoría con el id: ' + id,
+                errors: { message: 'No se pudo encontrar la Categoría para actualizar' }
+            });
+        } else {
+            res.status(200).json({
+                success: true,
+                message: 'Operación realizada de forma exitosa.',
+                category: category
+            });
+        }
+    })
+});
 
 router.post('/', (req, res, next) => {
     let category = new Category({
