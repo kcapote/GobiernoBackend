@@ -28,8 +28,7 @@ const RuleSchema = mongoose.Schema({
         ref: 'User'  
     },
     file: {
-        type: Buffer,
-        required: [true, "El archivo es requerido"]
+        type: Buffer
     },
     linkFile: String
 });

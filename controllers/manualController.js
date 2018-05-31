@@ -162,6 +162,7 @@ router.put('/:id', (req, res, next) => {
         } else {
 
             let manualHist = new ManualHist({
+                idOrigin: rule._id,
                 name: manual.name,
                 description: manual.description,
                 version: manual.version,
@@ -186,7 +187,7 @@ router.put('/:id', (req, res, next) => {
 
             manual.name = req.body.name;
             manual.description = req.body.description;
-            manual.version = req.body.version;
+            manual.version = rule.version+1;
             manual.updateDate = new Date();
             manual.category = req.body.category;
             manual.user = req.body.user;

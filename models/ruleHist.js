@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 var Schema =	mongoose.Schema;
 
 const RuleHistSchema = mongoose.Schema({
+    idOrigin: {
+        type: String,
+    },
     name: {
         type: String,
         required: [true, "El nombre de la manual es nesesario"]
@@ -28,8 +31,7 @@ const RuleHistSchema = mongoose.Schema({
         ref: 'User'  
     },
     file: {
-        type: Buffer,
-        required: [true, "El archivo es requerido"]
+        type: Buffer
     },
     linkFile: String
 });

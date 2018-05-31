@@ -162,6 +162,7 @@ router.put('/:id', (req, res, next) => {
         } else {
 
             let ruleHist = new RuleHist({
+                idOrigin: rule._id,
                 name: rule.name,
                 description: rule.description,
                 version: rule.version,
@@ -186,7 +187,7 @@ router.put('/:id', (req, res, next) => {
 
             rule.name = req.body.name;
             rule.description = req.body.description;
-            rule.version = req.body.version;
+            rule.version = rule.version+1;
             rule.updateDate = new Date();
             rule.category = req.body.category;
             rule.user = req.body.user;
