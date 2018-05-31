@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const Manual = require('../models/manual');
+const ManualHist = require('../models/manualHist');
+
 
 router.get('/', (req, res) => {
 
@@ -10,6 +12,7 @@ router.get('/', (req, res) => {
 
     Manual.find()
         .populate('category')
+        .populate('user')
         .skip(pagination)
         .limit(10)
         .exec(
@@ -25,7 +28,7 @@ router.get('/', (req, res) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
                             manuals: manuals,
-                            totalRecords: totalRecords,
+                            totalRecords: manuals.length,
                             pagination: pagination
                         }, null, 2));
                         res.end();
@@ -45,6 +48,7 @@ router.get('/search/:term', (req, res) => {
 
     Manual.find()
         .populate('category')
+        .populate('user')
         .or([{ 'name': regex }, { 'description': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
         .skip(pagination)
         .limit(10)
@@ -62,7 +66,7 @@ router.get('/search/:term', (req, res) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
                             manuals: manuals,
-                            totalRecords: totalRecords,
+                            totalRecords: manuals.length,
                             pagination: pagination
                         }, null, 2));
                         res.end();
@@ -79,6 +83,7 @@ router.get('/:id', (req, res, next) => {
 
     Manual.find({'_id':id})
     .populate('category')
+    .populate('user')
     .exec(
         (id, (err, manual) => {
             if (err) {
@@ -110,13 +115,15 @@ router.post('/', (req, res, next) => {
     let manual = new Manual({
         name: req.body.name,
         description: req.body.description,
+        version: req.body.version,
         creationDate: new Date(),
         updateDate: new Date(),
         category: req.body.category,
-        linkFile: req.body.linkFile,
-        idFile: req.body.idFile
+        user: req.body.user,
+        file: req.body.file,
+        linkFile: req.body.linkFile
     });
-    manual.save((err, manualSave) => {
+    manual.save((err, manual) => {
         if (err) {
             res.status(400).json({
                 success: false,
@@ -127,7 +134,7 @@ router.post('/', (req, res, next) => {
             res.status(201).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa.',
-                manual: manualSave
+                manual: manual
             });
         }
     });
@@ -154,12 +161,37 @@ router.put('/:id', (req, res, next) => {
             });
         } else {
 
+            let manualHist = new ManualHist({
+                name: manual.name,
+                description: manual.description,
+                version: manual.version,
+                creationDate: manual.creationDate,
+                updateDate: manual.updateDate,
+                category: manual.category,
+                user: manual.user,
+                file: manual.file,
+                linkFile: manual.linkFile
+            });
+            manualHist.save((err, manualHist) => {
+                if (err) {
+                    res.status(400).json({
+                        success: false,
+                        message: 'No se puede respaldar el manual',
+                        errors: err
+                    });
+                } else {
+                    //console.log(manualHist);
+                }
+            });
+
             manual.name = req.body.name;
             manual.description = req.body.description;
+            manual.version = req.body.version;
             manual.updateDate = new Date();
             manual.category = req.body.category;
+            manual.user = req.body.user;
+            manual.file = req.body.file || manual.file;
             manual.linkFile = req.body.linkFile;
-            manual.idFile = req.body.idFile
 
             manual.save((err, manualSave) => {
                 if (err) {

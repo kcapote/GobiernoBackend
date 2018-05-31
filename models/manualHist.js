@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 var Schema =	mongoose.Schema;
 
-const RuleSchema = mongoose.Schema({
+const ManualHistSchema = mongoose.Schema({
     name: {
         type: String,
         required: [true, "El nombre de la manual es nesesario"]
@@ -34,4 +34,4 @@ const RuleSchema = mongoose.Schema({
     linkFile: String
 });
 
-const Rule = module.exports = mongoose.model('Rule', RuleSchema);
+const ManualHist = module.exports = mongoose.model('ManualHist', ManualHistSchema);

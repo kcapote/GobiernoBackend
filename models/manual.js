@@ -8,7 +8,10 @@ const ManualSchema = mongoose.Schema({
     },
     description: {
         type: String,
-        required: [true, "La descripción de la manual es nesesaria"]
+        required: [true, "La descripción del manual es nesesaria"]
+    },
+    version: {
+        type: String
     },
     creationDate: {
         type: Date
@@ -20,8 +23,15 @@ const ManualSchema = mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Category'  
     },
-    linkFile: String,
-    idFile: String
+    user: { 
+        type: Schema.Types.ObjectId,
+        ref: 'User'  
+    },
+    file: {
+        type: Buffer,
+        required: [true, "El archivo es requerido"]
+    },
+    linkFile: String
 });
 
 const Manual = module.exports = mongoose.model('Manual', ManualSchema);
