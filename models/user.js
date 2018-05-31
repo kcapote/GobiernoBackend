@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 var validRoles = {
-    values: ['ADMIN_ROLE', 'QUERY_ROLE', 'CHARGE_ROLE'],
+    values: ['ADMINISTRADOR', 'CONSULTA', 'CARGA'],
     message: '{VALUE} no es un rol permitido'
 }
 
@@ -26,7 +26,7 @@ const UserSchema = mongoose.Schema({
     role: {
         type: String,
         required: true,
-        default: 'QUERY_ROLE',
+        default: 'CONSULTA',
         enum: validRoles
     }
 });
