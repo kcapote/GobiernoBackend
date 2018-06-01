@@ -187,7 +187,7 @@ router.put('/:id', (req, res, next) => {
 
             manual.name = req.body.name;
             manual.description = req.body.description;
-            manual.version = rule.version + 1;
+            manual.version = String(Number(manual.version) + 1);
             manual.updateDate = new Date();
             manual.category = req.body.category;
             manual.user = req.body.user;

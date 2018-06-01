@@ -81,33 +81,33 @@ router.get('/:id', (req, res, next) => {
 
     let id = req.params.id;
 
-    Rule.find({'_id':id})
-    .populate('category')
-    .populate('user')
-    .exec(
-        (id, (err, rule) => {
-            if (err) {
-                res.status(500).json({
-                    success: false,
-                    message: 'No se puede actualizar la norma',
-                    errors: err
-                });
-            }
-            if (!rule) {
-                res.status(400).json({
-                    success: false,
-                    message: 'No existe una norma con el id: ' + id,
-                    errors: { message: 'No se pudo encontrar la norma' }
-                });
-            } else {
-                res.status(200).json({
-                    success: true,
-                    message: 'Operación realizada de forma exitosa.',
-                    rule: rule
-                });
-            }
-        })
-    )
+    Rule.find({ '_id': id })
+        .populate('category')
+        .populate('user')
+        .exec(
+            (id, (err, rule) => {
+                if (err) {
+                    res.status(500).json({
+                        success: false,
+                        message: 'No se puede actualizar la norma',
+                        errors: err
+                    });
+                }
+                if (!rule) {
+                    res.status(400).json({
+                        success: false,
+                        message: 'No existe una norma con el id: ' + id,
+                        errors: { message: 'No se pudo encontrar la norma' }
+                    });
+                } else {
+                    res.status(200).json({
+                        success: true,
+                        message: 'Operación realizada de forma exitosa.',
+                        rule: rule
+                    });
+                }
+            })
+        )
 });
 
 
@@ -187,7 +187,7 @@ router.put('/:id', (req, res, next) => {
 
             rule.name = req.body.name;
             rule.description = req.body.description;
-            rule.version = rule.version+1;
+            rule.version = String(Number(rule.version) + 1);
             rule.updateDate = new Date();
             rule.category = req.body.category;
             rule.user = req.body.user;
