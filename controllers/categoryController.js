@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const authentication = require('../middlewares/authentication');
 
 const Category = require('../models/category');
 
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
 
     let pagination = req.query.pagination || 0;
     pagination = Number(pagination);
@@ -17,7 +18,8 @@ router.get('/', (req, res) => {
                     res.status(500).json({
                         success: false,
                         message: 'No se pueden consultar las Categoría',
-                        errors: err
+                        errors: err,
+                        user: req.user
                     });
                 } else {
 
@@ -26,7 +28,8 @@ router.get('/', (req, res) => {
                             success: true,
                             categories: categories,
                             totalRecords: totalRecords,
-                            pagination: pagination
+                            pagination: pagination,
+                            user: req.user
                         }, null, 2));
                         res.end();
 
@@ -35,7 +38,7 @@ router.get('/', (req, res) => {
             });
 });
 
-router.get('/search/:term', (req, res) => {
+router.get('/search/:term', (req, res, next) => {
 
     let term = req.params.term;
     var regex = new RegExp(term, 'i');
@@ -53,16 +56,18 @@ router.get('/search/:term', (req, res) => {
                     res.status(500).json({
                         success: false,
                         message: 'No se encontrarón resultados',
-                        errors: err
+                        errors: err,
+                        user: req.user
                     });
                 } else {
 
-                    Category.count({}, (err, totalRecords) => {
+                    Category.or([{ 'name': regex }]).count({}, (err, totalRecords) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
                             categories: categories,
                             totalRecords: totalRecords,
-                            pagination: pagination
+                            pagination: pagination,
+                            user: req.user
                         }, null, 2));
                         res.end();
 
@@ -80,26 +85,29 @@ router.get('/:id', (req, res, next) => {
             res.status(500).json({
                 success: false,
                 message: 'No se puede actualizar la Categoría',
-                errors: err
+                errors: err,
+                user: req.user
             });
         }
         if (!category) {
             res.status(400).json({
                 success: false,
                 message: 'No existe una Categoría con el id: ' + id,
-                errors: { message: 'No se pudo encontrar la Categoría para actualizar' }
+                errors: { message: 'No se pudo encontrar la Categoría para actualizar' },
+                user: req.user
             });
         } else {
             res.status(200).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa.',
-                category: category
+                category: category,
+                user: req.user
             });
         }
     })
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
     let category = new Category({
         name: req.body.name,
         description: req.body.description
@@ -109,19 +117,21 @@ router.post('/', (req, res, next) => {
             res.status(400).json({
                 success: false,
                 message: 'No se puede crear la Categoría',
-                errors: err
+                errors: err,
+                user: req.user
             });
         } else {
             res.status(201).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa.',
-                category: categorySave
+                category: categorySave,
+                user: req.user
             });
         }
     });
 });
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let id = req.params.id;
 
@@ -130,7 +140,8 @@ router.put('/:id', (req, res, next) => {
             res.status(500).json({
                 success: false,
                 message: 'No se puede actualizar la Categoría',
-                errors: err
+                errors: err,
+                user: req.user
             });
         }
 
@@ -138,7 +149,8 @@ router.put('/:id', (req, res, next) => {
             res.status(400).json({
                 success: false,
                 message: 'No existe una Categoría con el id: ' + id,
-                errors: { message: 'No se pudo encontrar la Categoría para actualizar' }
+                errors: { message: 'No se pudo encontrar la Categoría para actualizar' },
+                user: req.user
             });
         } else {
             category.name = req.body.name;
@@ -149,13 +161,15 @@ router.put('/:id', (req, res, next) => {
                     res.status(400).json({
                         success: false,
                         message: 'No se puede actualizar la Categoría',
-                        errors: err
+                        errors: err,
+                        user: req.user
                     });
                 } else {
                     res.status(200).json({
                         success: true,
                         message: 'Operación realizada de forma exitosa.',
-                        category: categorySave
+                        category: categorySave,
+                        user: req.user
                     });
                 }
             });
@@ -165,7 +179,7 @@ router.put('/:id', (req, res, next) => {
 });
 
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let id = req.params.id;
 
@@ -174,19 +188,22 @@ router.delete('/:id', (req, res, next) => {
             res.status(500).json({
                 success: false,
                 message: 'No se puede eliminar la Categoría',
-                errors: err
+                errors: err,
+                user: req.user
             });
         } else if (categoryRemove) {
             res.status(200).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa',
-                category: categoryRemove
+                category: categoryRemove,
+                user: req.user
             });
         } else {
             res.status(400).json({
                 success: false,
                 message: 'No existe una Categoría con el id: ' + id,
-                errors: { message: 'No se pudo encontrar la Categoría para eliminar' }
+                errors: { message: 'No se pudo encontrar la Categoría para eliminar' },
+                user: req.user
             });
         }
     })

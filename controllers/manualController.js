@@ -3,9 +3,10 @@ const router = express.Router();
 
 const Manual = require('../models/manual');
 const ManualHist = require('../models/manualHist');
+const authentication = require('../middlewares/authentication');
 
 
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
 
     let pagination = req.query.pagination || 0;
     pagination = Number(pagination);
@@ -21,7 +22,8 @@ router.get('/', (req, res) => {
                     res.status(500).json({
                         success: false,
                         message: 'No se pueden consultar los manuales',
-                        errors: err
+                        errors: err,
+                        user: req.user
                     });
                 } else {
                     Manual.count({}, (err, totalRecords) => {
@@ -29,7 +31,8 @@ router.get('/', (req, res) => {
                             success: true,
                             manuals: manuals,
                             totalRecords: manuals.length,
-                            pagination: pagination
+                            pagination: pagination,
+                            user: req.user
                         }, null, 2));
                         res.end();
 
@@ -38,7 +41,7 @@ router.get('/', (req, res) => {
             });
 });
 
-router.get('/search/:term', (req, res) => {
+router.get('/search/:term', (req, res, next) => {
 
     let term = req.params.term;
     var regex = new RegExp(term, 'i');
@@ -58,16 +61,18 @@ router.get('/search/:term', (req, res) => {
                     res.status(500).json({
                         success: false,
                         message: 'No se encontrarón resultados',
-                        errors: err
+                        errors: err,
+                        user: req.user
                     });
                 } else {
 
-                    Manual.count({}, (err, totalRecords) => {
+                    Manual.or([{ 'name': regex }, { 'description': regex }]).count({}, (err, totalRecords) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
                             manuals: manuals,
                             totalRecords: manuals.length,
-                            pagination: pagination
+                            pagination: pagination,
+                            user: req.user
                         }, null, 2));
                         res.end();
 
@@ -90,20 +95,23 @@ router.get('/:id', (req, res, next) => {
                     res.status(500).json({
                         success: false,
                         message: 'No se puede actualizar el manual',
-                        errors: err
+                        errors: err,
+                        user: req.user
                     });
                 }
                 if (!manual) {
                     res.status(400).json({
                         success: false,
                         message: 'No existe un manual con el id: ' + id,
-                        errors: { message: 'No se pudo encontrar un manual' }
+                        errors: { message: 'No se pudo encontrar un manual' },
+                        user: req.user
                     });
                 } else {
                     res.status(200).json({
                         success: true,
                         message: 'Operación realizada de forma exitosa.',
-                        manual: manual
+                        manual: manual,
+                        user: req.user
                     });
                 }
             })
@@ -111,7 +119,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 
-router.post('/', (req, res, next) => {
+router.post('/', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
     let manual = new Manual({
         name: req.body.name,
         description: req.body.description,
@@ -128,19 +136,21 @@ router.post('/', (req, res, next) => {
             res.status(400).json({
                 success: false,
                 message: 'No se puede crear el manual',
-                errors: err
+                errors: err,
+                user: req.user
             });
         } else {
             res.status(201).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa.',
-                manual: manual
+                manual: manual,
+                user: req.user
             });
         }
     });
 });
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let id = req.params.id;
 
@@ -149,7 +159,8 @@ router.put('/:id', (req, res, next) => {
             res.status(500).json({
                 success: false,
                 message: 'No se puede actualizar el manual',
-                errors: err
+                errors: err,
+                user: req.user
             });
         }
 
@@ -157,7 +168,8 @@ router.put('/:id', (req, res, next) => {
             res.status(400).json({
                 success: false,
                 message: 'No existe un manual con el id: ' + id,
-                errors: { message: 'No se pudo encontrar un manual para actualizar' }
+                errors: { message: 'No se pudo encontrar un manual para actualizar' },
+                user: req.user
             });
         } else {
 
@@ -178,7 +190,8 @@ router.put('/:id', (req, res, next) => {
                     res.status(400).json({
                         success: false,
                         message: 'No se puede respaldar el manual',
-                        errors: err
+                        errors: err,
+                        user: req.user
                     });
                 } else {
                     //console.log(manualHist);
@@ -199,13 +212,15 @@ router.put('/:id', (req, res, next) => {
                     res.status(400).json({
                         success: false,
                         message: 'No se puede actualizar el manual',
-                        errors: err
+                        errors: err,
+                        user: req.user
                     });
                 } else {
                     res.status(200).json({
                         success: true,
                         message: 'Operación realizada de forma exitosa.',
-                        manual: manualSave
+                        manual: manualSave,
+                        user: req.user
                     });
                 }
             });
@@ -215,7 +230,7 @@ router.put('/:id', (req, res, next) => {
 });
 
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let id = req.params.id;
 
@@ -224,19 +239,22 @@ router.delete('/:id', (req, res, next) => {
             res.status(500).json({
                 success: false,
                 message: 'No se puede eliminar el manual',
-                errors: err
+                errors: err,
+                user: req.user
             });
         } else if (manualRemove) {
             res.status(200).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa',
-                manual: manualRemove
+                manual: manualRemove,
+                user: req.user
             });
         } else {
             res.status(400).json({
                 success: false,
                 message: 'No existe un manual con el id: ' + id,
-                errors: { message: 'No se pudo encontrar el manual para eliminar' }
+                errors: { message: 'No se pudo encontrar el manual para eliminar' },
+                user: req.user
             });
         }
     })
