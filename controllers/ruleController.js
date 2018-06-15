@@ -41,6 +41,65 @@ router.get('/', (req, res, next) => {
             });
 });
 
+router.get('/file/:idRule', (req, res, next) => {
+
+    let idRule = req.params.idRule;
+
+    Rule.find({'_id':idRule}, 'file')
+        .exec(
+            (err, rule) => {
+                if (err) {
+                    res.status(500).json({
+                        success: false,
+                        message: 'No se pueden consultar el archivo',
+                        errors: err,
+                        user: req.user
+                    });
+                } else {
+                    res.status(200).write(JSON.stringify({
+                        success: true,
+                        rule: rule,
+                        user: req.user
+                    }, null, 2));
+                    res.end();
+                }
+            });
+});
+
+router.get('/last', (req, res, next) => {
+
+    let pagination = req.query.pagination || 0;
+    pagination = Number(pagination);
+
+    Rule.find()
+        .populate('category')
+        .populate('user')
+        .limit(3)
+        .exec(
+            (err, rules) => {
+                if (err) {
+                    res.status(500).json({
+                        success: false,
+                        message: 'No se pueden consultar las normas',
+                        errors: err,
+                        user: req.user
+                    });
+                } else {
+                    Rule.count({}, (err, totalRecords) => {
+                        res.status(200).write(JSON.stringify({
+                            success: true,
+                            rules: rules,
+                            totalRecords: rules.length,
+                            pagination: pagination,
+                            user: req.user
+                        }, null, 2));
+                        res.end();
+
+                    });
+                }
+            });
+});
+
 router.get('/search/:term', (req, res, next) => {
 
     let term = req.params.term;
@@ -66,16 +125,17 @@ router.get('/search/:term', (req, res, next) => {
                     });
                 } else {
 
-                    Rule.or([{ 'name': regex }, { 'description': regex }]).count({}, (err, totalRecords) => {
-                        res.status(200).write(JSON.stringify({
-                            success: true,
-                            rules: rules,
-                            totalRecords: rules.length,
-                            pagination: pagination,
-                            user: req.user
-                        }, null, 2));
-                        res.end();
-
+                    Rule.find()
+                            .or([{ 'name': regex }, { 'description': regex }])  
+                            .count({}, (err, totalRecords) => {
+                                res.status(200).write(JSON.stringify({
+                                    success: true,
+                                    rules: rules,
+                                    totalRecords: rules.length,
+                                    pagination: pagination,
+                                    user: req.user
+                                }, null, 2));
+                                res.end();
                     });
                 }
             });
@@ -119,7 +179,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 
-router.post('/', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.post('/', (req, res, next) => {
     let rule = new Rule({
         name: req.body.name,
         description: req.body.description,
@@ -150,7 +210,7 @@ router.post('/', [authentication.verifyToken, authentication.refreshToken], (req
     });
 });
 
-router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.put('/:id', (req, res, next) => {
 
     let id = req.params.id;
 

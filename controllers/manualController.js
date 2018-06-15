@@ -41,6 +41,66 @@ router.get('/', (req, res, next) => {
             });
 });
 
+router.get('/file/:idManual', (req, res, next) => {
+
+    let idManual = req.params.idManual;
+
+    Manual.find({'_id':idManual}, 'file')
+        .exec(
+            (err, manual) => {
+                if (err) {
+                    res.status(500).json({
+                        success: false,
+                        message: 'No se pueden consultar el archivo',
+                        errors: err,
+                        user: req.user
+                    });
+                } else {
+                    res.status(200).write(JSON.stringify({
+                        success: true,
+                        manual: manual,
+                        user: req.user
+                    }, null, 2));
+                    res.end();
+                }
+            });
+});
+
+
+router.get('/last', (req, res, next) => {
+
+    let pagination = req.query.pagination || 0;
+    pagination = Number(pagination);
+
+    Manual.find()
+        .populate('category')
+        .populate('user')
+        .limit(3)
+        .exec(
+            (err, manuals) => {
+                if (err) {
+                    res.status(500).json({
+                        success: false,
+                        message: 'No se pueden consultar los manuales',
+                        errors: err,
+                        user: req.user
+                    });
+                } else {
+                    Manual.count({}, (err, totalRecords) => {
+                        res.status(200).write(JSON.stringify({
+                            success: true,
+                            manuals: manuals,
+                            totalRecords: manuals.length,
+                            pagination: pagination,
+                            user: req.user
+                        }, null, 2));
+                        res.end();
+
+                    });
+                }
+            });
+});
+
 router.get('/search/:term', (req, res, next) => {
 
     let term = req.params.term;
@@ -65,17 +125,17 @@ router.get('/search/:term', (req, res, next) => {
                         user: req.user
                     });
                 } else {
-
-                    Manual.or([{ 'name': regex }, { 'description': regex }]).count({}, (err, totalRecords) => {
-                        res.status(200).write(JSON.stringify({
-                            success: true,
-                            manuals: manuals,
-                            totalRecords: manuals.length,
-                            pagination: pagination,
-                            user: req.user
-                        }, null, 2));
-                        res.end();
-
+                    Manual.find()
+                            .or([{ 'name': regex }, { 'description': regex }])  
+                            .count({}, (err, totalRecords) => {
+                                res.status(200).write(JSON.stringify({
+                                    success: true,
+                                    manuals: manuals,
+                                    totalRecords: manuals.length,
+                                    pagination: pagination,
+                                    user: req.user
+                                }, null, 2));
+                                res.end();
                     });
                 }
             });
@@ -119,7 +179,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 
-router.post('/', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.post('/', (req, res, next) => {
     let manual = new Manual({
         name: req.body.name,
         description: req.body.description,
@@ -131,6 +191,8 @@ router.post('/', [authentication.verifyToken, authentication.refreshToken], (req
         file: req.body.file,
         linkFile: req.body.linkFile
     });
+    console.log(manual);
+    
     manual.save((err, manual) => {
         if (err) {
             res.status(400).json({
@@ -150,7 +212,7 @@ router.post('/', [authentication.verifyToken, authentication.refreshToken], (req
     });
 });
 
-router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.put('/:id', (req, res, next) => {
 
     let id = req.params.id;
 
@@ -230,7 +292,7 @@ router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (r
 });
 
 
-router.delete('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
 
     let id = req.params.id;
 

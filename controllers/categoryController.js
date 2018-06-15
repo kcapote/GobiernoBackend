@@ -60,17 +60,17 @@ router.get('/search/:term', (req, res, next) => {
                         user: req.user
                     });
                 } else {
-
-                    Category.or([{ 'name': regex }]).count({}, (err, totalRecords) => {
-                        res.status(200).write(JSON.stringify({
-                            success: true,
-                            categories: categories,
-                            totalRecords: totalRecords,
-                            pagination: pagination,
-                            user: req.user
-                        }, null, 2));
-                        res.end();
-
+                    Category.find()
+                            .or([{ 'name': regex }])     
+                            .count({}, (err, totalRecords) => {
+                                res.status(200).write(JSON.stringify({
+                                    success: true,
+                                    categories: categories,
+                                    totalRecords: totalRecords,
+                                    pagination: pagination,
+                                    user: req.user
+                                }, null, 2));
+                                res.end();
                     });
                 }
             });
@@ -107,7 +107,7 @@ router.get('/:id', (req, res, next) => {
     })
 });
 
-router.post('/', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.post('/', (req, res, next) => {
     let category = new Category({
         name: req.body.name,
         description: req.body.description
@@ -131,7 +131,7 @@ router.post('/', [authentication.verifyToken, authentication.refreshToken], (req
     });
 });
 
-router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.put('/:id', (req, res, next) => {
 
     let id = req.params.id;
 
@@ -179,7 +179,7 @@ router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (r
 });
 
 
-router.delete('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
 
     let id = req.params.id;
 

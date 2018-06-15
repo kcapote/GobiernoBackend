@@ -4,7 +4,6 @@ const User = require('../models/user');
 
 exports.verifyToken = function(req, res, next) {
     var token = req.query.token;
-    console.log(token);
     jwt.verify(token, constants.SEED, (err, decoded) => {
         if (err) {
             return res.status(401).json({
@@ -22,7 +21,6 @@ exports.refreshToken = function(req, res, next) {
     let tokenInfo = jwt.decode(token);
     let generate = 0; //req.query.generate || 1;
     generate = Number(generate);
-    console.log(token);
     User.findOne({ _id: tokenInfo.info }, (err, user) => {
 
         if (err) {
