@@ -11,7 +11,7 @@ router.get('/', (req, res, next) => {
     let pagination = req.query.pagination || 0;
     pagination = Number(pagination);
 
-    Rule.find()
+    Rule.find({}, 'name description version creationDate updateDate category user linkFile ')
         .populate('category')
         .populate('user')
         .skip(pagination)
@@ -71,7 +71,7 @@ router.get('/last', (req, res, next) => {
     let pagination = req.query.pagination || 0;
     pagination = Number(pagination);
 
-    Rule.find()
+    Rule.find({}, 'name description version creationDate updateDate category user linkFile ')
         .populate('category')
         .populate('user')
         .limit(3)
@@ -108,7 +108,7 @@ router.get('/search/:term', (req, res, next) => {
     let pagination = req.query.pagination || 0;
     pagination = Number(pagination);
 
-    Rule.find()
+    Rule.find({}, 'name description version creationDate updateDate category user linkFile ')
         .populate('category')
         .populate('user')
         .or([{ 'name': regex }, { 'description': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
