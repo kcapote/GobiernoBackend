@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var Schema =	mongoose.Schema;
+var Schema = mongoose.Schema;
 
 const ManualSchema = mongoose.Schema({
     name: {
@@ -19,16 +19,18 @@ const ManualSchema = mongoose.Schema({
     updateDate: {
         type: Date
     },
-    category: { 
+    category: {
         type: Schema.Types.ObjectId,
-        ref: 'Category'  
+        ref: 'Category'
     },
-    user: { 
+    user: {
         type: Schema.Types.ObjectId,
-        ref: 'User'  
+        ref: 'User'
     },
     file: {
-        type: Buffer
+        name: String,
+        mimeType: String,
+        doc: String
     },
     linkFile: String
 });

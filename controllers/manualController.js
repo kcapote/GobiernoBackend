@@ -45,7 +45,7 @@ router.get('/file/:idManual', (req, res, next) => {
 
     let idManual = req.params.idManual;
 
-    Manual.find({'_id':idManual}, 'file')
+    Manual.find({ '_id': idManual }, 'file')
         .exec(
             (err, manual) => {
                 if (err) {
@@ -126,17 +126,17 @@ router.get('/search/:term', (req, res, next) => {
                     });
                 } else {
                     Manual.find()
-                            .or([{ 'name': regex }, { 'description': regex }])  
-                            .count({}, (err, totalRecords) => {
-                                res.status(200).write(JSON.stringify({
-                                    success: true,
-                                    manuals: manuals,
-                                    totalRecords: manuals.length,
-                                    pagination: pagination,
-                                    user: req.user
-                                }, null, 2));
-                                res.end();
-                    });
+                        .or([{ 'name': regex }, { 'description': regex }])
+                        .count({}, (err, totalRecords) => {
+                            res.status(200).write(JSON.stringify({
+                                success: true,
+                                manuals: manuals,
+                                totalRecords: manuals.length,
+                                pagination: pagination,
+                                user: req.user
+                            }, null, 2));
+                            res.end();
+                        });
                 }
             });
 });
@@ -189,10 +189,11 @@ router.post('/', (req, res, next) => {
         category: req.body.category,
         user: req.body.user,
         file: req.body.file,
+
         linkFile: req.body.linkFile
     });
     console.log(manual);
-    
+
     manual.save((err, manual) => {
         if (err) {
             res.status(400).json({
