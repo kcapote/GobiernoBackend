@@ -28,7 +28,9 @@ const RuleSchema = mongoose.Schema({
         ref: 'User'  
     },
     file: {
-        type: Buffer
+        name: String,
+        mimeType: String,
+        doc: String
     },
     linkFile: String
 });
