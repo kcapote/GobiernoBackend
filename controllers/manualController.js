@@ -77,6 +77,7 @@ router.get('/last', (req, res, next) => {
         .populate('category')
         .populate('user')
         .limit(3)
+        .sort('creationDate', 1)
         .exec(
             (err, manuals) => {
                 if (err) {
