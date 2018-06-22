@@ -16,7 +16,7 @@ router.get('/', (req, res, next) => {
         .populate('user')
         .skip(pagination)
         .limit(10)
-        .sort('creationDate', 1)
+        .sort({creationDate: 'descending'})
         .exec(
             (err, rules) => {
                 if (err) {
@@ -76,7 +76,7 @@ router.get('/last', (req, res, next) => {
         .populate('category')
         .populate('user')
         .limit(3)
-        .sort('creationDate', 1)
+        .sort({creationDate: 'descending'})
         .exec(
             (err, rules) => {
                 if (err) {
