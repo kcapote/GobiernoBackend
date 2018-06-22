@@ -38,6 +38,34 @@ router.get('/', (req, res, next) => {
             });
 });
 
+router.get('/all', (req, res, next) => {
+
+    Category.find()
+        .exec(
+            (err, categories) => {
+                if (err) {
+                    res.status(500).json({
+                        success: false,
+                        message: 'No se pueden consultar las Categoría',
+                        errors: err,
+                        user: req.user
+                    });
+                } else {
+
+                    Category.count({}, (err, totalRecords) => {
+                        res.status(200).write(JSON.stringify({
+                            success: true,
+                            categories: categories,
+                            totalRecords: categories.length,
+                            user: req.user
+                        }, null, 2));
+                        res.end();
+
+                    });
+                }
+            });
+});
+
 router.get('/search/:term', (req, res, next) => {
 
     let term = req.params.term;

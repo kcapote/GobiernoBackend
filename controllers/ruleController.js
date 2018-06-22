@@ -290,7 +290,7 @@ router.put('/:id', (req, res, next) => {
 });
 
 
-router.delete('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
     
     let id = req.params.id;
 
