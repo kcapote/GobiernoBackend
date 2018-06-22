@@ -16,6 +16,7 @@ router.get('/', (req, res, next) => {
         .populate('user')
         .skip(pagination)
         .limit(10)
+        .sort('creationDate', 1)
         .exec(
             (err, manuals) => {
                 if (err) {
