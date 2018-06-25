@@ -11,6 +11,7 @@ const ruleController = require('./controllers/ruleController');
 const manualController = require('./controllers/manualController');
 const userController = require('./controllers/userController');
 const noticeController = require('./controllers/noticeController');
+const securityController = require('./controllers/securityController');
 
 //Connect mongoose to our database
 mongoose.connect(config.database);
@@ -48,6 +49,7 @@ app.use('/rule', ruleController);
 app.use('/manual', manualController);
 app.use('/user', userController);
 app.use('/notice', noticeController);
+app.use('/security', securityController);
 
 //Listen to port 3000
 app.listen(port, () => {

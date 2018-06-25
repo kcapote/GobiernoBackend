@@ -5,9 +5,7 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const constants = require('../config/constants');
 
-router.post('/login/', (req, res, next) => {
-
-    console.log(req.body);
+router.post('/login', (req, res, next) => {
 
     if (req.body.email == null) {
         return res.status(400).json({

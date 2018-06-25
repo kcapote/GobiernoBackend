@@ -162,7 +162,7 @@ router.put('/:id', (req, res, next) => {
             user.name = req.body.name;
             user.lastName = req.body.lastName;
             user.email = req.body.email;
-            user.password = req.body.password || user.password;
+            user.password = bcrypt.hashSync(req.body.password, 10) || user.password;
             user.role = req.body.role;
             user.recordActive = req.body.recordActive || true;
 
