@@ -13,7 +13,7 @@ router.post('/login', (req, res, next) => {
             message: 'Debe ingresar el correo para realizar el login',
             errors: { message: 'Debe ingresar el correo para realizar el login' }
         });
-    }
+    }   
 
     if (req.body.password == null) {
         return res.status(400).json({
