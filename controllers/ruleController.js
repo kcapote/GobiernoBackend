@@ -16,7 +16,6 @@ router.get('/', (req, res, next) => {
         .populate('user')
         .skip(pagination)
         .limit(10)
-        .sort({creationDate: 'descending'})
         .exec(
             (err, rules) => {
                 if (err) {
@@ -46,7 +45,7 @@ router.get('/file/:idRule', (req, res, next) => {
 
     let idRule = req.params.idRule;
 
-    Rule.find({'_id':idRule}, 'file')
+    Rule.find({ '_id': idRule }, 'file')
         .exec(
             (err, rule) => {
                 if (err) {
@@ -76,7 +75,6 @@ router.get('/last', (req, res, next) => {
         .populate('category')
         .populate('user')
         .limit(3)
-        .sort({creationDate: 'descending'})
         .exec(
             (err, rules) => {
                 if (err) {
@@ -128,17 +126,17 @@ router.get('/search/:term', (req, res, next) => {
                 } else {
 
                     Rule.find()
-                            .or([{ 'name': regex }, { 'description': regex }])  
-                            .count({}, (err, totalRecords) => {
-                                res.status(200).write(JSON.stringify({
-                                    success: true,
-                                    rules: rules,
-                                    totalRecords: rules.length,
-                                    pagination: pagination,
-                                    user: req.user
-                                }, null, 2));
-                                res.end();
-                    });
+                        .or([{ 'name': regex }, { 'description': regex }])
+                        .count({}, (err, totalRecords) => {
+                            res.status(200).write(JSON.stringify({
+                                success: true,
+                                rules: rules,
+                                totalRecords: rules.length,
+                                pagination: pagination,
+                                user: req.user
+                            }, null, 2));
+                            res.end();
+                        });
                 }
             });
 });
@@ -292,8 +290,8 @@ router.put('/:id', (req, res, next) => {
 });
 
 
-router.delete('/:id', (req, res, next) => {
-    
+router.delete('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+
     let id = req.params.id;
 
     Rule.findByIdAndRemove(id, (err, ruleRemove) => {
