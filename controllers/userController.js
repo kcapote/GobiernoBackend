@@ -108,7 +108,7 @@ router.get('/:id', (req, res, next) => {
             });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/',[authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let user = new User({
         name: req.body.name,
@@ -137,7 +137,7 @@ router.post('/', (req, res, next) => {
     });
 });
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id',[authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let id = req.params.id;
 
@@ -189,11 +189,11 @@ router.put('/:id', (req, res, next) => {
 });
 
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id',[authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let id = req.params.id;
 
-    Rule.findByIdAndRemove(id, (err, userDelete) => {
+    User.findByIdAndRemove(id, (err, userDelete) => {
         if (err) {
             res.status(500).json({
                 success: false,
@@ -202,7 +202,7 @@ router.delete('/:id', (req, res, next) => {
                 userDelete: userDelete,
                 user: req.user
             });
-        } else if (user) {
+        } else if (userDelete) {
             res.status(200).json({
                 success: true,
                 message: 'Operación realizada de forma exitosa',
