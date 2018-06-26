@@ -19,7 +19,7 @@ exports.verifyToken = function(req, res, next) {
 exports.refreshToken = function(req, res, next) {
     var token = req.query.token;
     let tokenInfo = jwt.decode(token);
-    let generate = 0; //req.query.generate || 1;
+    let generate = 1; //req.query.generate || 1;
     generate = Number(generate);
     User.findOne({ _id: tokenInfo.info }, (err, user) => {
 

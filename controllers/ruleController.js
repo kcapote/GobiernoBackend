@@ -181,7 +181,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 
-router.post('/', (req, res, next) => {
+router.post('/', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
     let rule = new Rule({
         name: req.body.name,
         description: req.body.description,
@@ -212,7 +212,7 @@ router.post('/', (req, res, next) => {
     });
 });
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let id = req.params.id;
 
@@ -292,7 +292,7 @@ router.put('/:id', (req, res, next) => {
 });
 
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
     
     let id = req.params.id;
 
