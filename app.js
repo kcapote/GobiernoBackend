@@ -14,6 +14,7 @@ const manualHistController = require('./controllers/manualHistController');
 const userController = require('./controllers/userController');
 const noticeController = require('./controllers/noticeController');
 const securityController = require('./controllers/securityController');
+const statsController = require('./controllers/statsController');
 
 //Connect mongoose to our database
 mongoose.connect(config.database);
@@ -54,6 +55,8 @@ app.use('/manualHist', manualHistController);
 app.use('/user', userController);
 app.use('/notice', noticeController);
 app.use('/security', securityController);
+app.use('/stats', statsController);
+
 
 //Listen to port 3000
 app.listen(port, () => {
