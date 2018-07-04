@@ -4,6 +4,7 @@ const User = require('../models/user');
 
 exports.verifyToken = function(req, res, next) {
     var token = req.query.token;
+    console.log("TOKEN VERIFY: "+token);
     jwt.verify(token, constants.SEED, (err, decoded) => {
         if (err) {
             return res.status(401).json({
@@ -39,13 +40,13 @@ exports.refreshToken = function(req, res, next) {
             });
         }
 
-        if (user.token != token) {
+        /*if (user.token != token) {
             return res.status(401).json({
                 success: false,
                 message: 'Acceso Denegado',
                 errors: err
             });
-        }
+        }*/
 
         if (generate > 0) {
             //crear un token
@@ -64,7 +65,7 @@ exports.refreshToken = function(req, res, next) {
             } else {
                 userSave.password = '';
                 req.user = userSave;
-                console.log(userSave.token);
+                console.log("TOKEN NEW: "+userSave.token);
                 next();
             }
         });

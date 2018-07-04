@@ -8,10 +8,13 @@ const config = require('./config/database');
 //import of controllers
 const categoryController = require('./controllers/categoryController');
 const ruleController = require('./controllers/ruleController');
+const ruleHistController = require('./controllers/ruleHistController');
 const manualController = require('./controllers/manualController');
+const manualHistController = require('./controllers/manualHistController');
 const userController = require('./controllers/userController');
 const noticeController = require('./controllers/noticeController');
 const securityController = require('./controllers/securityController');
+const statsController = require('./controllers/statsController');
 
 //Connect mongoose to our database
 mongoose.connect(config.database);
@@ -46,10 +49,14 @@ app.get('/', (req, res) => {
 //Routing all HTTP requests to all controllers
 app.use('/category', categoryController);
 app.use('/rule', ruleController);
+app.use('/ruleHist', ruleHistController);
 app.use('/manual', manualController);
+app.use('/manualHist', manualHistController);
 app.use('/user', userController);
 app.use('/notice', noticeController);
 app.use('/security', securityController);
+app.use('/stats', statsController);
+
 
 //Listen to port 3000
 app.listen(port, () => {
