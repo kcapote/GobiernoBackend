@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
         .populate('user')
         .skip(pagination)
         .limit(10)
-        .sort({creationDate: 'descending'})
+        .sort({ creationDate: 'descending' })
         .exec(
             (err, manuals) => {
                 if (err) {
@@ -72,11 +72,11 @@ router.get('/last', (req, res, next) => {
     let pagination = req.query.pagination || 0;
     pagination = Number(pagination);
 
-    ManualHist.find({},'name description version creationDate updateDate category user linkFile ')
+    ManualHist.find({}, 'name description version creationDate updateDate category user linkFile ')
         .populate('category')
         .populate('user')
         .limit(3)
-        .sort({creationDate: 'descending'})
+        .sort({ creationDate: 'descending' })
         .exec(
             (err, manuals) => {
                 if (err) {
@@ -110,10 +110,28 @@ router.get('/search/:term', (req, res, next) => {
     let pagination = req.query.pagination || 0;
     pagination = Number(pagination);
 
-    ManualHist.find({},'name description version creationDate updateDate category user linkFile ')
+    var categoriaId = req.query.categoriaId;
+    let condicion = {};
+    let orCondicion = {};
+
+    if (categoriaId) {
+        condicion = {
+            'category': categoriaId
+        }
+    }
+
+    if (term != 'undefined') {
+
+        orCondicion = [
+            { 'name': regex },
+            { 'description': regex }
+        ]
+    }
+
+    ManualHist.find(condicion, 'name description version creationDate updateDate category user linkFile ')
         .populate('category')
         .populate('user')
-        .or([{ 'name': regex }, { 'description': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
+        .or(orCondicion) //arreglo de campos a tomar en cuenta para la busqueda
         .skip(pagination)
         .limit(10)
         .exec(
@@ -127,7 +145,7 @@ router.get('/search/:term', (req, res, next) => {
                     });
                 } else {
                     ManualHist.find()
-                        .or([{ 'name': regex }, { 'description': regex }])
+                        .or(orCondicion)
                         .count({}, (err, totalRecords) => {
                             res.status(200).write(JSON.stringify({
                                 success: true,

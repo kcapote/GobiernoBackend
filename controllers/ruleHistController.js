@@ -107,10 +107,30 @@ router.get('/search/:term', (req, res, next) => {
     let pagination = req.query.pagination || 0;
     pagination = Number(pagination);
 
-    RuleHist.find({}, 'name description version creationDate updateDate category user linkFile ')
+
+
+    var categoriaId = req.query.categoriaId;
+    let condicion = {};
+    let orCondicion = {};
+
+    if (categoriaId) {
+        condicion = {
+            'category': categoriaId
+        }
+    }
+
+    if (term != 'undefined') {
+
+        orCondicion = [
+            { 'name': regex },
+            { 'description': regex }
+        ]
+    }
+
+    RuleHist.find(condicion, 'name description version creationDate updateDate category user linkFile ')
         .populate('category')
         .populate('user')
-        .or([{ 'name': regex }, { 'description': regex }]) //arreglo de campos a tomar en cuenta para la busqueda
+        .or(orCondicion) //arreglo de campos a tomar en cuenta para la busqueda
         .skip(pagination)
         .limit(10)
         .exec(
@@ -125,7 +145,7 @@ router.get('/search/:term', (req, res, next) => {
                 } else {
 
                     RuleHist.find()
-                        .or([{ 'name': regex }, { 'description': regex }])
+                        .or(orCondicion)
                         .count({}, (err, totalRecords) => {
                             res.status(200).write(JSON.stringify({
                                 success: true,
