@@ -31,7 +31,7 @@ router.get('/', (req, res, next) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
                             manuals: manuals,
-                            totalRecords: manuals.length,
+                            totalRecords: totalRecords,
                             pagination: pagination,
                             user: req.user
                         }, null, 2));
@@ -92,7 +92,7 @@ router.get('/last', (req, res, next) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
                             manuals: manuals,
-                            totalRecords: manuals.length,
+                            totalRecords: totalRecords,
                             pagination: pagination,
                             user: req.user
                         }, null, 2));
@@ -154,7 +154,7 @@ router.get('/search/:term', (req, res, next) => {
                             res.status(200).write(JSON.stringify({
                                 success: true,
                                 manuals: manuals,
-                                totalRecords: manuals.length,
+                                totalRecords: totalRecords,
                                 pagination: pagination,
                                 user: req.user
                             }, null, 2));

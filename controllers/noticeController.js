@@ -27,7 +27,7 @@ router.get('/', (req, res, next) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
                             notices: notices,
-                            totalRecords: notices.length,
+                            totalRecords: totalRecords,
                             pagination: pagination,
                             user: req.user
                         }, null, 2));
@@ -58,7 +58,7 @@ router.get('/last', (req, res, next) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
                             notices: notices,
-                            totalRecords: notices.length,
+                            totalRecords: totalRecords,
                             user: req.user
                         }, null, 2));
                         res.end();
@@ -91,17 +91,17 @@ router.get('/search/:term', (req, res, next) => {
                     });
                 } else {
                     Notice.find()
-                            .or([{ 'name': regex }])     
-                            .count({}, (err, totalRecords) => {
-                                res.status(200).write(JSON.stringify({
-                                    success: true,
-                                    notices: notices,
-                                    totalRecords: notices.length,
-                                    pagination: pagination,
-                                    user: req.user
-                                }, null, 2));
-                                res.end();
-                    });
+                        .or([{ 'name': regex }])
+                        .count({}, (err, totalRecords) => {
+                            res.status(200).write(JSON.stringify({
+                                success: true,
+                                notices: notices,
+                                totalRecords: totalRecords,
+                                pagination: pagination,
+                                user: req.user
+                            }, null, 2));
+                            res.end();
+                        });
                 }
             });
 });
@@ -187,9 +187,9 @@ router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (r
         } else {
 
             notice.title = req.body.title,
-            notice.description = req.body.description,
-            notice.updateDate = new Date(),
-            notice.user = req.body.user
+                notice.description = req.body.description,
+                notice.updateDate = new Date(),
+                notice.user = req.body.user
 
             notice.save((err, notice) => {
                 if (err) {

@@ -29,7 +29,7 @@ router.get('/', (req, res, next) => {
                         res.status(200).write(JSON.stringify({
                             success: true,
                             users: users,
-                            totalRecords: users.length,
+                            totalRecords: totalRecords,
                             pagination: pagination,
                             user: req.user
                         }, null, 2));
@@ -65,17 +65,17 @@ router.get('/search/:term', (req, res, next) => {
                 } else {
 
                     User.find()
-                            .or([{ 'name': regex }, { 'lastName': regex }, { 'email': regex }])  
-                            .count({}, (err, totalRecords) => {
-                                res.status(200).write(JSON.stringify({
-                                    success: true,
-                                    users: users,
-                                    totalRecords: users.length,
-                                    pagination: pagination,
-                                    user: req.user
-                                }, null, 2));
-                                res.end();
-                    });
+                        .or([{ 'name': regex }, { 'lastName': regex }, { 'email': regex }])
+                        .count({}, (err, totalRecords) => {
+                            res.status(200).write(JSON.stringify({
+                                success: true,
+                                users: users,
+                                totalRecords: totalRecords,
+                                pagination: pagination,
+                                user: req.user
+                            }, null, 2));
+                            res.end();
+                        });
                 }
             });
 });
@@ -108,7 +108,7 @@ router.get('/:id', (req, res, next) => {
             });
 });
 
-router.post('/',[authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.post('/', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let user = new User({
         name: req.body.name,
@@ -137,7 +137,7 @@ router.post('/',[authentication.verifyToken, authentication.refreshToken], (req,
     });
 });
 
-router.put('/:id',[authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.put('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let id = req.params.id;
 
@@ -189,7 +189,7 @@ router.put('/:id',[authentication.verifyToken, authentication.refreshToken], (re
 });
 
 
-router.delete('/:id',[authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
+router.delete('/:id', [authentication.verifyToken, authentication.refreshToken], (req, res, next) => {
 
     let id = req.params.id;
 
